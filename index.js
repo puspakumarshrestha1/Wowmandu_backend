@@ -6,6 +6,7 @@ const app = express();
 
 const connectDB = require("./configs/connectdb");
 const blogRoute = require("./routes/blogRoute");
+const commentRoute = require("./routes/commentRoute");
 
 app.use(express.json());
 app.use(cors());
@@ -14,6 +15,7 @@ const PORT = process.env.PORT;
 const DATABASE_URL = process.env.DATABASE_URL;
 
 app.use("/api/blog", blogRoute);
+app.use("/api/comment", commentRoute);
 
 connectDB(DATABASE_URL);
 
