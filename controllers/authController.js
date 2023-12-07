@@ -15,7 +15,7 @@ const register = async (req, res) => {
       } else {
         if (password === confirmPassword) {
           const salt = await bcrypt.genSalt(10);
-          const hashedPassword = bcrypt.hash(password, salt);
+          const hashedPassword = await bcrypt.hash(password, salt);
           const newUser = new AuthModel({
             firstName: firstName,
             lastName: lastName,
@@ -53,9 +53,11 @@ const login = async (req, res) => {
     if (email && password) {
       const existingUser = await AuthModel.findOne({ email: email });
       if (existingUser === null) {
+        res.status(404).json({ message: "No user found with this email!" });
+      } else {
         const isMatch = await bcrypt.compare(password, existingUser.password);
         if (existingUser.email === email && isMatch) {
-          const token = await jwt.sign(
+          const token = jwt.sign(
             { userID: existingUser._id },
             process.env.SECRET_JWT_KEY,
             { expiresIn: "5d" }
@@ -63,9 +65,11 @@ const login = async (req, res) => {
           res
             .status(200)
             .json({ message: "Logged in successfully!", token: token });
+        } else {
+          res
+            .status(400)
+            .json({ message: "Email or Password does not match!" });
         }
-      } else {
-        res.status(404).json({ message: "No user found with this email!" });
       }
     } else {
       res.status(400).json({ message: "All fields are required!" });
@@ -76,16 +80,18 @@ const login = async (req, res) => {
 };
 
 // change password by logged in user
+
 const changePassword = async (req, res) => {
-  const { newPassword, confirmNewPassword, email, currentPassword } = req.body;
+  const { newPassword, confirmNewPassword, currentPassword,email } = req.body;
   try {
     const user = await AuthModel.findOne({ email: email });
-    const oldPasswordDb = user.password;
-    if (newPassword && confirmNewPassword && oldPasswordDb && currentPassword) {
-      if (oldPasswordDb === previousPassword) {
+    const isMatch = await bcrypt.compare(currentPassword, user.password); //compare previous password
+
+    if (newPassword && confirmNewPassword && isMatch) {
+      if (isMatch) {
         if (newPassword === confirmNewPassword) {
-          const salt = bcrypt.genSalt(10);
-          const hashedPassword = bcrypt.hash(newPassword, salt);
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(newPassword, salt);
           //save new password
           await AuthModel.findByIdAndUpdate(req.user._id, {
             $set: { password: hashedPassword },
@@ -103,7 +109,7 @@ const changePassword = async (req, res) => {
       res.status(400).json({ message: "All fields are required!" });
     }
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({ message: "Internal server error", error });
   }
 };
 
@@ -139,7 +145,6 @@ const sendPasswordResetEmail = async (req, res) => {
 };
 
 //reset password
-
 const resetPassword = async (req, res) => {
   const { password, confirmPassword } = req.body;
   const { id, token } = req.params;
@@ -168,4 +173,12 @@ const resetPassword = async (req, res) => {
     console.log(error);
     res.send({ status: "failed", message: "Invalid Token" });
   }
+};
+
+module.exports = {
+  register,
+  login,
+  changePassword,
+  sendPasswordResetEmail,
+  resetPassword,
 };

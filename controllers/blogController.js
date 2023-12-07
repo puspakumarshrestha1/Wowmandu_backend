@@ -52,16 +52,33 @@ const getBlog = async (req, res) => {
 };
 
 const getAllBlogs = async (req, res) => {
+  const qCategory = req.query.category;
+  let blogs;
   try {
-    const allBlogs = await BlogModel.find();
-    if (!allBlogs || allBlogs.length === 0) {
-      res.status(404).json({ message: "Blogs not found!" });
+    if (qCategory) {
+      blogs = await BlogModel.find({
+        categories: {
+          $in: [qCategory],
+        },
+      }).sort({ _id: -1 });
+      res.status(200).json({ blogs });
     } else {
+      const allBlogs = await BlogModel.find().sort({ _id: -1 });
       res.status(200).json({ allBlogs });
     }
   } catch (error) {
     res.status(500).json(error);
   }
+  // try {
+  //   const allBlogs = await BlogModel.find().sort({ _id: -1 }).limit(10);
+  //   if (!allBlogs || allBlogs.length === 0) {
+  //     res.status(404).json({ message: "Blogs not found!" });
+  //   } else {
+  //     res.status(200).json({ allBlogs });
+  //   }
+  // } catch (error) {
+  //   res.status(500).json(error);
+  // }
 };
 
 module.exports = { addBlog, updateBlog, deleteBlog, getBlog, getAllBlogs };
