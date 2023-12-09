@@ -1,6 +1,7 @@
 const AuthModel = require("../models/Auth");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const transporter = require("../configs/emailConfig");
 
 const register = async (req, res) => {
   const { firstName, lastName, password, confirmPassword, isAdmin, email } =
@@ -82,7 +83,7 @@ const login = async (req, res) => {
 // change password by logged in user
 
 const changePassword = async (req, res) => {
-  const { newPassword, confirmNewPassword, currentPassword,email } = req.body;
+  const { newPassword, confirmNewPassword, currentPassword, email } = req.body;
   try {
     const user = await AuthModel.findOne({ email: email });
     const isMatch = await bcrypt.compare(currentPassword, user.password); //compare previous password
@@ -123,16 +124,18 @@ const sendPasswordResetEmail = async (req, res) => {
       const token = jwt.sign({ userID: user._id }, secret, {
         expiresIn: "15m",
       });
-      const link = `http://127.0.0.1:3000/api/user/reset/${user._id}/${token}`;
+      const link = `http://127.0.0.1:3000/api/auth/reset-password/${user._id}/${token}`;
+      console.log(link);
       let info = await transporter.sendMail({
         from: process.env.EMAIL_FORM,
         to: user.email,
-        subject: "Hello this is email from Nodemailer",
+        subject: "Reset email from WoWMandu to change your password!",
         html: `<a href=${link}>Click Here</a> to Reset Your Password`,
       });
       res.status(200).json({
         status: "Success",
         message: "Password Reset Email Sent! Please Check Your Email.",
+        info: info,
       });
     } else {
       res.status(404).json({ status: "Failed", message: "User not found!" });
