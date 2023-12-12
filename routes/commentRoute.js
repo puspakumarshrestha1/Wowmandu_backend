@@ -10,9 +10,9 @@ const {
 
 // protected route
 
-router.get("/", getComment);
-router.post("/", addComment);
-router.put("/update-cmt/:id", updateComment);
+router.get("/:blog_id/comments", getComment);
+router.post("/:blog_id/comments/create", addComment);
+router.put("/:blog_id/update-cmt/:id", updateComment);
 router.delete("/:id", deleteComment);
 
 module.exports = router;
