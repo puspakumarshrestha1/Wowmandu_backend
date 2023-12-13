@@ -79,46 +79,6 @@ const deleteComment = async (req, res) => {
   }
 };
 
-// const getComment = async (req, res) => {
-//   try {
-//     const blog_id = req.params.blog_id;
-
-//     if (!mongoose.Types.ObjectId.isValid(blog_id)) {
-//       return res.status(400).json({ message: "Invalid blog ID." });
-//     }
-
-//     const confirmBlogId = await BlogModel.findById(blog_id);
-
-//     if (!confirmBlogId) {
-//       return res
-//         .status(404)
-//         .json({ message: "Blog not found to a comment update." });
-//     }
-
-//     let query = [
-//       {
-//         $lookup: {
-//           from: "blog",
-//           localField: "title",
-//           foreignField: "_id",
-//           as: "blog",
-//         },
-//       },
-//       { $unwind: "$blog" },
-//       {
-//         $match: {
-//           blog_id: mongoose.Types.ObjectId(blog_id),
-//         },
-//       },
-//       {
-//         $sort:{
-//           createdAt:-1
-//         }
-//       }
-//     ];
-
-
-
 
 // const getComment = async (req, res) => {
 //   try {
@@ -139,13 +99,13 @@ const deleteComment = async (req, res) => {
 //     let query = [
 //       {
 //         $lookup: {
-//           from: "blogs",  // Assuming the "comments" collection name
-//           localField: "blog_id",  // Assuming "title" is the field in "blog" to match
-//           foreignField: "_id",  // Assuming "blog_id" is the field in "comments" to match
-//           as: "blog",
+//           from: "comments", 
+//           localField: "_id",  // Assuming "title" is the field in "blog" to match
+//           foreignField: "blog_id",  // Assuming "blog_id" is the field in "comments" to match
+//           as: "comments",
 //         },
 //       },
-//       { $unwind: "$blog" },
+//       { $unwind: "$comments" },
 //       {
 //         $match: {
 //           "blog_id": mongoose.Types.ObjectId(blog_id),
@@ -172,6 +132,70 @@ const deleteComment = async (req, res) => {
 // };
 
 
+const getComment = async (req, res) => {
+  try {
+    const blog_id = req.params.blog_id;
+
+    if (!mongoose.Types.ObjectId.isValid(blog_id)) {
+      return res.status(400).json({ message: "Invalid blog ID." });
+    }
+
+    const confirmBlogId = await BlogModel.findById(blog_id);
+
+    if (!confirmBlogId) {
+      return res
+        .status(404)
+        .json({ message: "Blog not found to a comment update." });
+    }
+
+    let query = [
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "blog_id",
+          as: "comments",
+        },
+      },
+      {
+        $unwind: "$comments",
+      },
+      {
+        $sort: {
+          "comments.createdAt": -1,
+        },
+      },
+    ];
+
+    // let comments = await BlogModel.aggregate(query);
+
+    // return res.status(200).json({
+    //   message: "Comments fetched successfully!",
+    //   data: {
+    //     comments: comments[2].comments, // Assuming you want to return an array of comments
+    //   },
+    // });
+
+    let result = await BlogModel.aggregate(query);
+
+    // Extracting the comments array
+    let comments = result.map(blog => blog.comments);
+
+    return res.status(200).json({
+      message: "Comments fetched successfully!",
+      data: {
+        comments: comments.flat(), // Flatten the array of arrays
+      },
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error!" });
+  }
+};
+
+
+
 
 
 
@@ -187,19 +211,19 @@ const deleteComment = async (req, res) => {
 //   }
 // };
 
-const getComment = async (req, res) => {
-  try {
-    const Comment = await CommentModel.find()
-    // const Comment = await CommentModel.findOne({
-    //   CommentID: req.params.CommentID,
-    // });
-    if (!Comment) {
-      res.status(404).json({ message: "Requested Comment not found!" });
-    }
-    res.status(200).json({ Comment });
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-};
+// const getComment = async (req, res) => {
+//   try {
+//     const Comment = await CommentModel.find()
+//     // const Comment = await CommentModel.findOne({
+//     //   CommentID: req.params.CommentID,
+//     // });
+//     if (!Comment) {
+//       res.status(404).json({ message: "Requested Comment not found!" });
+//     }
+//     res.status(200).json({ Comment });
+//   } catch (error) {
+//     res.status(500).json({ error });
+//   }
+// };
 
 module.exports = { addComment, updateComment, deleteComment, getComment };
