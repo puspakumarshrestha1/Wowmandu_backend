@@ -119,24 +119,14 @@ const getComment = async (req, res) => {
       },
     ];
 
-    // let commentsData = await BlogModel.aggregate(query);
-
-    // return res.status(200).json({
-    //   message: "Comments fetched successfully!",
-    //   data: {
-    //     comments: commentsData[0].comments, // Assuming you want to return an array of comments
-    //   },
-    // });
-
     let result = await BlogModel.aggregate(query);
 
-    // Extracting the comments array
     let comments = result.map((blog) => blog.comments);
 
     return res.status(200).json({
       message: "Comments fetched successfully!",
       data: {
-        comments: comments.flat(), // Flatten the array of arrays
+        comments: comments.flat(),
       },
     });
   } catch (error) {
@@ -144,98 +134,5 @@ const getComment = async (req, res) => {
     res.status(500).json({ message: "Internal server error!" });
   }
 };
-
-// const getComment = async (req, res) => {
-//   try {
-//     const blog_id = req.params.blog_id;
-
-//     if (!mongoose.Types.ObjectId.isValid(blog_id)) {
-//       return res.status(400).json({ message: "Invalid blog ID." });
-//     }
-
-//     const confirmBlogId = await BlogModel.findById(blog_id);
-
-//     if (!confirmBlogId) {
-//       return res
-//         .status(404)
-//         .json({ message: "Blog not found to a comment update." });
-//     }
-
-//     let query = [
-//       {
-//         $lookup: {
-//           from: "comments",
-//           localField: "_id",
-//           foreignField: "blog_id",
-//           as: "comments",
-//         },
-//       },
-//       {
-//         $unwind: "$comments",
-//       },
-//       {
-//         $match:{
-//           'blog_id':new mongoose.Types.ObjectId(blog_id)
-//         }
-//       },
-//       {
-//         $sort: {
-//           "comments.createdAt": -1,
-//         },
-//       },
-//     ];
-
-//     let comments = await BlogModel.aggregate(query);
-
-//     return res.status(200).json({
-//       message: "Comments fetched successfully!",
-//       data: {
-//         comments: comments[0].comments, // Assuming you want to return an array of comments
-//       },
-//     });
-
-// let result = await BlogModel.aggregate(query);
-
-// // Extracting the comments array
-// let comments = result.map(blog => blog.comments);
-
-// return res.status(200).json({
-//   message: "Comments fetched successfully!",
-//   data: {
-//     comments: comments.flat(), // Flatten the array of arrays
-//   },
-// });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error!" });
-//   }
-// };
-
-//     let comments = await CommentModel.aggregate(query);
-//     return res.status(200).json({
-//       message: "Comments fetched succesfully!",
-//       data: {
-//         comments: comments,
-//       },
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: "Internal server error!" });
-//   }
-// };
-
-// const getComment = async (req, res) => {
-//   try {
-//     const Comment = await CommentModel.find()
-//     // const Comment = await CommentModel.findOne({
-//     //   CommentID: req.params.CommentID,
-//     // });
-//     if (!Comment) {
-//       res.status(404).json({ message: "Requested Comment not found!" });
-//     }
-//     res.status(200).json({ Comment });
-//   } catch (error) {
-//     res.status(500).json({ error });
-//   }
-// };
 
 module.exports = { addComment, updateComment, deleteComment, getComment };
