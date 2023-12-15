@@ -17,6 +17,6 @@ router.post("/admin-registration", register);
 router.post("/admin-login", login);
 router.post("/change-password", changePassword);
 router.post("/send-reset-email", sendPasswordResetEmail);
-router.post("/reset-password", resetPassword);
+router.post("/reset-password/:id/:token", resetPassword);
 
 module.exports = router;
