@@ -7,12 +7,12 @@ const {
   getBlog,
   getAllBlogs,
 } = require("../controllers/blogController");
-const verifyAdmin = require("../middlewares/verifyAdmin")
+// const verifyAdmin = require("../middlewares/verifyAdmin")
 
 // protected route 
-router.post("/add-blog",verifyAdmin);
-router.put("/update-blog/:id",verifyAdmin);
-router.delete("/:id",verifyAdmin);
+// router.post("/add-blog",verifyAdmin);
+// router.put("/update-blog/:id",verifyAdmin);
+// router.delete("/:id",verifyAdmin);
 
 //routes
 router.post("/add-blog", addBlog);

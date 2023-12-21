@@ -16,6 +16,7 @@ const verifyAdminAuthentication = async (req, res, next) => {
         next();
       } else {
         res.status(401).json({ message: "You are not Authorized!" });
+        console.log("need athenticated user")
       }
     } catch (error) {
       res.status(401).send({ status: "Failed", message: "Unauthorized User!" });

@@ -8,6 +8,7 @@ const addBlog = async (req, res) => {
     res.status(200).json({ message: "Blog added successfully!", savedBlog });
   } catch (error) {
     res.status(500).json({ message: "Can not add blog!" });
+    console.log("Need authenticated user")
   }
 };
 
@@ -64,8 +65,8 @@ const getAllBlogs = async (req, res) => {
       }).sort({ _id: -1 });
       res.status(200).json({ blogs });
     } else {
-      const allBlogs = await BlogModel.find().sort({ _id: -1 });
-      res.status(200).json({ allBlogs });
+      blogs = await BlogModel.find().sort({ _id: -1 });
+      res.status(200).json({ allBlogs: blogs });
     }
   } catch (error) {
     res.status(500).json(error);

@@ -18,5 +18,15 @@
     "mongoose": "^8.0.2",
     "nodemailer": "^6.9.7",
     "nodemon": "^3.0.2"
+  },
+  "proxy": {
+    "/api/*": {
+      "target": "http://localhost:8000/",
+      "secure": false,
+      "headers": {
+        "host": "localhost:8000"
+      },
+      "cookieDomainRewrite": ""
+    }
   }
 }

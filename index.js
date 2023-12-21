@@ -21,10 +21,6 @@ app.use("/api/auth", authRoute);
 
 connectDB(DATABASE_URL);
 
-app.get("/", (req, res) => {
-  res.send("hello");
-});
-
 app.listen(PORT, () => {
   console.log(`Server started listening to http://localhost:${PORT}`);
 });

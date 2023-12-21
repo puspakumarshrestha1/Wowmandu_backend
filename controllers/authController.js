@@ -66,7 +66,10 @@ const login = async (req, res) => {
           res
             .status(200)
             .json({ message: "Logged in successfully!", token: token });
+            console.log("loggedin")
+            console.log("token:",token)
         } else {
+          console.log("error aayo")
           res
             .status(400)
             .json({ message: "Email or Password does not match!" });
@@ -178,10 +181,23 @@ const resetPassword = async (req, res) => {
   }
 };
 
+//admin profile
+const showAdminProfile = async (req, res) => {
+  try {
+    const getAdminInfo = await AuthModel.find({}, { password: 0, _id: 0 });
+    res
+      .status(200)
+      .json({ message: "Your profile information.", profile: getAdminInfo });
+  } catch (error) {
+    res.status(500).json({ error, message: "Internal server error!" });
+  }
+};
+
 module.exports = {
   register,
   login,
   changePassword,
   sendPasswordResetEmail,
   resetPassword,
+  showAdminProfile,
 };

@@ -4,7 +4,7 @@ const CommentModel = require("../models/Comment")
 const blogSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    image: { type: String, required: true },
+    image: { type: String },
     categories: { type: Array },
     blogContent: { type: String, required: true },
     author: { type: String, required: true },
