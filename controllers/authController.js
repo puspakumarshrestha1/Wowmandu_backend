@@ -66,10 +66,10 @@ const login = async (req, res) => {
           res
             .status(200)
             .json({ message: "Logged in successfully!", token: token });
-            console.log("loggedin")
-            console.log("token:",token)
+          console.log("logged in");
+          console.log("token:", token);
         } else {
-          console.log("error aayo")
+          console.log("error aayo");
           res
             .status(400)
             .json({ message: "Email or Password does not match!" });
@@ -79,7 +79,7 @@ const login = async (req, res) => {
       res.status(400).json({ message: "All fields are required!" });
     }
   } catch (error) {
-    res.send({ status: "failed", message: "Unable to Login" });
+    res.status(500).json({ error, message: "Unable to Login" });
   }
 };
 

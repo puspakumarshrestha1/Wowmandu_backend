@@ -8,8 +8,6 @@ const {
   getComment,
 } = require("../controllers/commentController");
 
-// protected route
-
 router.get("/:blog_id/comments", getComment);
 router.post("/:blog_id/comments/create", addComment);
 router.put("/:blog_id/update-cmt/:id", updateComment);
