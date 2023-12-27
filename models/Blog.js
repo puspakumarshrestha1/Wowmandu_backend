@@ -7,7 +7,7 @@ const blogSchema = new mongoose.Schema(
     image: { type: String },
     categories: { type: Array },
     blogContent: { type: String, required: true },
-    author: { type: String, required: true },
+    author: { type: String },
     blog_comments: [
       { type: mongoose.Schema.Types.ObjectId, ref: "CommentModel" },
     ],

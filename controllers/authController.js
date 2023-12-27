@@ -66,10 +66,7 @@ const login = async (req, res) => {
           res
             .status(200)
             .json({ message: "Logged in successfully!", token: token });
-          console.log("logged in");
-          console.log("token:", token);
         } else {
-          console.log("error aayo");
           res
             .status(400)
             .json({ message: "Email or Password does not match!" });
@@ -101,6 +98,7 @@ const changePassword = async (req, res) => {
             $set: { password: hashedPassword },
           });
           res.status(200).json({ message: "Password changed successfully!" });
+          console.log("Password changed successfully!")
         } else {
           res
             .status(400)
@@ -114,12 +112,15 @@ const changePassword = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
+    console.log("Something went wrong!",error)
+
   }
 };
 
 //send reset password email
 const sendPasswordResetEmail = async (req, res) => {
   const { email } = req.body;
+  console.log(email)
   if (email) {
     const user = await AuthModel.findOne({ email: email });
     if (user) {
@@ -127,7 +128,7 @@ const sendPasswordResetEmail = async (req, res) => {
       const token = jwt.sign({ userID: user._id }, secret, {
         expiresIn: "15m",
       });
-      const link = `http://127.0.0.1:3000/api/auth/reset-password/${user._id}/${token}`;
+      const link = `http://127.0.0.1:5173/reset-password/${user._id}/${token}`;
       console.log(link);
       let info = await transporter.sendMail({
         from: process.env.EMAIL_FORM,
@@ -140,6 +141,7 @@ const sendPasswordResetEmail = async (req, res) => {
         message: "Password Reset Email Sent! Please Check Your Email.",
         info: info,
       });
+      console.log("ResetEmailSent")
     } else {
       res.status(404).json({ status: "Failed", message: "User not found!" });
     }
@@ -147,6 +149,7 @@ const sendPasswordResetEmail = async (req, res) => {
     res
       .status(401)
       .json({ status: "Failed!", message: "Email Field is Required!" });
+      console.log("Error")
   }
 };
 

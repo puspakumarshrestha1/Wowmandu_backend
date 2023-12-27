@@ -11,10 +11,10 @@ const {
 } = require("../controllers/authController");
 
 //protected routes
-router.post("/change-password", verifyAdminAuthentication);
-router.get("/admin-profile", verifyAdminAuthentication);
+// router.post("/change-password", verifyAdminAuthentication);
+// router.get("/admin-profile", verifyAdminAuthentication);
 
-router.get("/admin-profile", showAdminProfile);
+// router.get("/admin-profile", showAdminProfile);
 
 //routes
 router.post("/admin-registration", register);
