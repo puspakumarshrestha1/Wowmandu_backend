@@ -1,9 +1,30 @@
 const BlogModel = require("../models/Blog");
 
+// const addBlog = async (req, res) => {
+//   const { title, blogContent, author, categories } = req.body;
+//   const file = req.file;
+//   try {
+//     const newBlogData = {
+//       title,
+//       blogContent,
+//       author,
+//       image:  file ? file.path : null,
+//       categories
+//     };
+
+//     const newBlog = new BlogModel(newBlogData);
+//     const savedBlog = await newBlog.save();
+
+//     res.status(200).json({ message: "Blog added successfully!", savedBlog });
+//   } catch (error) {
+//     res.status(500).json({ message: "Can not add blog!" });
+//     console.error("Error adding blog:", error);
+//   }
+// };
 const addBlog = async (req, res) => {
-  const newBlogData = req.body;
+  const blogData = req.body;
   try {
-    const newBlog = new BlogModel(newBlogData);
+    const newBlog = new BlogModel(blogData);
     const savedBlog = await newBlog.save();
     res.status(200).json({ message: "Blog added successfully!", savedBlog });
   } catch (error) {
@@ -27,6 +48,7 @@ const updateBlog = async (req, res) => {
   }
 };
 
+
 const deleteBlog = async (req, res) => {
   const blogID = req.params.id;
   try {
@@ -42,15 +64,19 @@ const deleteBlog = async (req, res) => {
 
 const getBlog = async (req, res) => {
   try {
-    const blog = await BlogModel.findOne({ blogID: req.params.blogID });
+    const blog = await BlogModel.findOne({ _id: req.params.id });
+
     if (!blog) {
-      res.status(404).json({ message: "Requested blog not found!" });
+      return res.status(404).json({ message: "Requested blog not found!" });
     }
     res.status(200).json({ blog });
   } catch (error) {
-    res.status(500).json({ error });
+    console.error("Error fetching blog:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 //all blogs
 const getAllBlogs = async (req, res) => {
