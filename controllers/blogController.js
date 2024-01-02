@@ -1,26 +1,5 @@
 const BlogModel = require("../models/Blog");
 
-// const addBlog = async (req, res) => {
-//   const { title, blogContent, author, categories } = req.body;
-//   const file = req.file;
-//   try {
-//     const newBlogData = {
-//       title,
-//       blogContent,
-//       author,
-//       image:  file ? file.path : null,
-//       categories
-//     };
-
-//     const newBlog = new BlogModel(newBlogData);
-//     const savedBlog = await newBlog.save();
-
-//     res.status(200).json({ message: "Blog added successfully!", savedBlog });
-//   } catch (error) {
-//     res.status(500).json({ message: "Can not add blog!" });
-//     console.error("Error adding blog:", error);
-//   }
-// };
 const addBlog = async (req, res) => {
   const blogData = req.body;
   try {
@@ -48,19 +27,18 @@ const updateBlog = async (req, res) => {
   }
 };
 
-
-const deleteBlog = async (req, res) => {
-  const blogID = req.params.id;
-  try {
-    const deletedBlog = await BlogModel.findByIdAndDelete(blogID);
-    if (!deletedBlog) {
-      res.status(404).json({ message: "Blog not found or already deleted!" });
-    }
-    res.status(200).json({ message: "Blog deleted successfully!" });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting Order from the database" });
-  }
-};
+// const deleteBlog = async (req, res) => {
+//   const blogID = req.params.id;
+//   try {
+//     const deletedBlog = await BlogModel.findByIdAndDelete(blogID);
+//     if (!deletedBlog) {
+//       res.status(404).json({ message: "Blog not found or already deleted!" });
+//     }
+//     res.status(200).json({ message: "Blog deleted successfully!" });
+//   } catch (error) {
+//     res.status(500).json({ message: "Error deleting Order from the database" });
+//   }
+// };
 
 const getBlog = async (req, res) => {
   try {
@@ -99,4 +77,4 @@ const getAllBlogs = async (req, res) => {
   }
 };
 
-module.exports = { addBlog, updateBlog, deleteBlog, getBlog, getAllBlogs };
+module.exports = { addBlog, updateBlog, getBlog, getAllBlogs };

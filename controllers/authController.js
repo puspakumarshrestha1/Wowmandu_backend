@@ -87,7 +87,6 @@ const changePassword = async (req, res) => {
   try {
     const user = await AuthModel.findOne({ email: email });
     const isMatch = await bcrypt.compare(currentPassword, user.password); //compare previous password
-
     if (newPassword && confirmNewPassword && isMatch) {
       if (isMatch) {
         if (newPassword === confirmNewPassword) {
@@ -112,7 +111,7 @@ const changePassword = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error });
-    console.log("Something went wrong!",error)
+    console.log("Something went wrong!", error)
 
   }
 };
@@ -137,6 +136,8 @@ const sendPasswordResetEmail = async (req, res) => {
         html: `<a href=${link}>Click Here</a> to Reset Your Password`,
       });
       res.status(200).json({
+        userID: user._id,
+        token: token,
         status: "Success",
         message: "Password Reset Email Sent! Please Check Your Email.",
         info: info,
@@ -149,7 +150,7 @@ const sendPasswordResetEmail = async (req, res) => {
     res
       .status(401)
       .json({ status: "Failed!", message: "Email Field is Required!" });
-      console.log("Error")
+    console.log("Error")
   }
 };
 
