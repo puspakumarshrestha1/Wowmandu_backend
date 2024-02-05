@@ -27,19 +27,6 @@ const updateBlog = async (req, res) => {
   }
 };
 
-// const deleteBlog = async (req, res) => {
-//   const blogID = req.params.id;
-//   try {
-//     const deletedBlog = await BlogModel.findByIdAndDelete(blogID);
-//     if (!deletedBlog) {
-//       res.status(404).json({ message: "Blog not found or already deleted!" });
-//     }
-//     res.status(200).json({ message: "Blog deleted successfully!" });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error deleting Order from the database" });
-//   }
-// };
-
 const getBlog = async (req, res) => {
   try {
     const blog = await BlogModel.findOne({ _id: req.params.id });
@@ -53,8 +40,6 @@ const getBlog = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 
 
 //all blogs

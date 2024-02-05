@@ -81,38 +81,72 @@ const login = async (req, res) => {
 };
 
 // change password by logged in user
+// const changePassword = async (req, res) => {
+//   const { newPassword, confirmNewPassword, currentPassword, email } = req.body;
+//   try {
+//     const user = await AuthModel.findOne({ email: email });
+//     const isMatch = await bcrypt.compare(currentPassword, user.password); //compare previous password
+//     if (newPassword && confirmNewPassword && isMatch) {
+//       if (isMatch) {
+//         if (newPassword === confirmNewPassword) {
+//           const salt = await bcrypt.genSalt(10);
+//           const hashedPassword = await bcrypt.hash(newPassword, salt);
+//           //save new password
+//           await AuthModel.findByIdAndUpdate(req.user._id, {
+//             $set: { password: hashedPassword },
+//           });
+//           res.status(200).json({ message: "Password changed successfully!" });
+//           console.log("Password changed successfully!")
+//         } else {
+//           res
+//             .status(400)
+//             .json({ message: "Password and Confirm Password does not match!" });
+//         }
+//       } else {
+//         res.status(400).json({ message: "Current Password does not match!" });
+//       }
+//     } else {
+//       res.status(400).json({ message: "All fields are required!" });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: "Internal server error", error });
+//     console.log("Something went wrong!", error)
+
+//   }
+// };
 
 const changePassword = async (req, res) => {
   const { newPassword, confirmNewPassword, currentPassword, email } = req.body;
   try {
-    const user = await AuthModel.findOne({ email: email });
-    const isMatch = await bcrypt.compare(currentPassword, user.password); //compare previous password
-    if (newPassword && confirmNewPassword && isMatch) {
-      if (isMatch) {
-        if (newPassword === confirmNewPassword) {
-          const salt = await bcrypt.genSalt(10);
-          const hashedPassword = await bcrypt.hash(newPassword, salt);
-          //save new password
-          await AuthModel.findByIdAndUpdate(req.user._id, {
-            $set: { password: hashedPassword },
-          });
-          res.status(200).json({ message: "Password changed successfully!" });
-          console.log("Password changed successfully!")
-        } else {
-          res
-            .status(400)
-            .json({ message: "Password and Confirm Password does not match!" });
-        }
-      } else {
-        res.status(400).json({ message: "Current Password does not match!" });
-      }
-    } else {
-      res.status(400).json({ message: "All fields are required!" });
+    if (!newPassword || !confirmNewPassword || !currentPassword || !email) {
+      return res.status(400).json({ message: "All fields are required!" });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", error });
-    console.log("Something went wrong!", error)
 
+    const user = await AuthModel.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found!" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current Password does not match!" });
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ message: "Password and Confirm Password do not match!" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    await AuthModel.findByIdAndUpdate(req.user._id, {
+      $set: { password: hashedPassword },
+    });
+
+    res.status(200).json({ message: "Password changed successfully!" });
+    console.log("Password changed successfully!");
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
